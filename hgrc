@@ -1,0 +1,11 @@
+[ui]
+username = Stephen Chen <tracelog@fb.com>
+
+[alias]
+l = !hg log -G --template '\033[1;32m{bookmarks} \033[0;33m{node|short} \033[0m({date|age}) \033[1;34m{desc|firstline} \033[0;36m{author|user}'
+p = !hg summary
+br = !hg bookmarks
+cp = !hg graft
+stash = !hg shelve
+unstash = !hg unshelve
+last = !hg log -r . --template "{files}\n"

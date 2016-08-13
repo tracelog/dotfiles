@@ -1,0 +1,37 @@
+[alias]
+        co = checkout
+        br = branch
+        st = status
+        d = difftool
+        p = show --name-only
+	unstage = reset
+        cp = cherry-pick
+        cherrypick = cherry-pick
+        last = log --oneline -n
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+
+[color "diff"]
+  plain = white
+  meta = yellow bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
+  whitespace = red blink
+
+[color "status"]
+  added = yellow
+  changed = green
+  untracked = cyan
+[svn]
+        followparent = true
+[diff]
+        tool = ec-diff
+[difftool "ec-diff"]
+        cmd = ~/bin/ec-diff.sh "$REMOTE" "$LOCAL"
+[user]
+	email = tracelog@fb.com
+[gc]
+	auto = 0
