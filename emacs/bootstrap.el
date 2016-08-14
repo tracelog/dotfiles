@@ -26,12 +26,11 @@ Return a list of installed packages or nil for every skipped package."
     (package-refresh-contents))
 
 ;; (-uniq package-activated-list)
-(setq my-packages
-      '(buffer-stack color-theme find-file-in-project swiper
-      find-file-in-repository ido-vertical-mode keyfreq
-      magit-find-file dash magit magit-popup async git-commit
-      with-editor smex smooth-scrolling spaceline s powerline
-      undo-tree))
+(setq my-packages '(ace-window buffer-stack color-theme
+      find-file-in-project swiper find-file-in-repository
+      ido-vertical-mode keyfreq magit-find-file dash magit
+      magit-popup async git-commit with-editor smex
+      smooth-scrolling spaceline s powerline undo-tree))
 
 (apply 'ensure-package-installed my-packages)
 

@@ -228,5 +228,6 @@ With argument, do this that many times."
 (require 'buffer-stack)
 (global-set-key (kbd "ESC <left>") (quote buffer-stack-down))
 (global-set-key (kbd "ESC <right>") (quote buffer-stack-up))
-
+(global-set-key (kbd "C-M-O") (quote ace-window))
+(global-set-key (kbd "M-`") (quote ace-window))
 (provide 'key-config)
