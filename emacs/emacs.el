@@ -34,7 +34,7 @@
  '(pabbrev-thing-at-point-constituent (quote symbol))
  '(recentf-max-menu-items 10)
  '(recentf-max-saved-items 1000)
- '(recentf-save-file "/data/users/tracelog/emacs/recentf")
+ '(recentf-save-file "~/.emacs.d/recentf")
  '(show-paren-mode t)
  '(transient-mark-mode t)
  '(vc-follow-symlinks t))

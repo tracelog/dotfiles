@@ -53,6 +53,10 @@
             (define-key emacs-lisp-mode-map "\C-x:d" 'eval-defun)
             (setq show-trailing-whitespace t)))
 
+(add-hook 'lisp-interaction-mode-hook
+          (lambda()
+            (local-set-key (kbd "M-RET") 'eval-print-last-sexp)))
+
 (add-hook 'python-mode-hook
 	  (lambda()
             (abbrev-mode 1)
