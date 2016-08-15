@@ -32,6 +32,7 @@ alias amend="hg commit --amend"
 alias st="git st"
 alias sl=ls
 alias grc="git rebase --continue"
+alias dotfiles="cd ~/.dotfiles"
 export GREP_OPTIONS='--color=auto'
 export EDITOR=emacsclient
 
