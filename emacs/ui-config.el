@@ -6,12 +6,17 @@
 
 
 ;; Mode line
+(require 'window-numbering)
+(window-numbering-mode)
+(window-numbering-clear-mode-line)
 (require 'spaceline-config)
 (setq spaceline-process-p nil)
 (setq spaceline-minor-modes-p nil)
 (setq spaceline-buffer-encoding-abbrev-p nil)
+(setq spaceline-version-control-p nil)
+(setq spaceline-window-numbers-unicode nil)
 (spaceline--theme
- '(buffer-modified :face highlight-face)
+ '((window-number buffer-modified) :face highlight-face :separator " | ")
  '(buffer-id :face highlight-face))
 (color-theme-vibrant-ink-inspired)
 
@@ -118,11 +123,16 @@
   "put the *completions* buffer in the right spot"
   (save-selected-window
     (let ((top-right (window-at (- (frame-width) 2) 0))
-          (bottom-right (window-at (- (frame-width) 2) (- (frame-height) 2))))
+          (bottom-right (window-at (- (frame-width) 2) (- (frame-height) 2)))
+          (top-left (window-at 0 0)))
       (if (eq top-right bottom-right)
-          (progn
-            (select-window top-right)
-            (split-window-vertically)))
+          (if (eq top-left top-right)
+              (progn
+                (select-window top-right)
+                (split-window-horizontally))
+            (progn
+              (select-window top-right)
+              (split-window-vertically))))
       (let ((target-window (window-at (- (frame-width) 2) (- (frame-height) 2))))
         (set-window-buffer target-window buf)
         target-window))))
@@ -130,6 +140,8 @@
 (add-to-list 'special-display-buffer-names '("*Completions*" my-display-completions))
 (add-to-list 'special-display-buffer-names '("*Help*" my-display-completions))
 (add-to-list 'special-display-buffer-names '("*compilation*" my-display-completions))
+(add-to-list 'special-display-buffer-names '("*grep*" my-display-completions))
+(add-to-list 'special-display-buffer-names '("*Async Shell Command*" my-display-completions))
 
 
 ;; recnetf

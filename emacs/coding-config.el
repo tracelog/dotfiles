@@ -5,7 +5,13 @@
 
 ;; Compilation Mode
 (setq compilation-scroll-output 1)
+(require 'ansi-color)
 (add-hook 'compilation-mode-hook '(lambda () (setq truncate-lines nil)))
+(defun colorize-compilation-buffer ()
+  (toggle-read-only)
+  (ansi-color-apply-on-region compilation-filter-start (point))
+  (toggle-read-only))
+(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
 ;; Shell Mode
 (setq comint-prompt-read-only t)
@@ -25,7 +31,7 @@
 
 (add-hook 'shell-mode-hook
           '(lambda ()
-             (setq dirtrack-list '("^\\[[a-zA-Z0-9@]+ \\(.*\\) (.*)\\]" 1 nil))
+             (setq dirtrack-list '("^\\[[a-z]+@[a-z0-9.]+ \\(.*\\)\\]" 1 nil))
              (dirtrack-mode 1)))
 
 ;; Coding modes

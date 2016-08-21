@@ -30,7 +30,9 @@ Return a list of installed packages or nil for every skipped package."
       find-file-in-project swiper find-file-in-repository
       ido-vertical-mode keyfreq magit-find-file dash magit
       magit-popup async git-commit with-editor smex
-      smooth-scrolling spaceline s powerline undo-tree))
+      smooth-scrolling spaceline s powerline undo-tree
+      window-numbering markdown-mode
+      ))
 
 (apply 'ensure-package-installed my-packages)
 

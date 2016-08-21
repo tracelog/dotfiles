@@ -156,7 +156,7 @@ With argument, do this that many times."
      (new-shell shell-buffer-name))))
 
 (loop for i from 1 to 5 do
-     (global-set-key (read-kbd-macro (format "M-%d" i)) 'switch-to-shell))
+     (global-set-sticky-key (read-kbd-macro (format "M-%d" i)) 'switch-to-shell))
 
 (defalias 'sl 'sort-lines)
 
@@ -203,8 +203,6 @@ With argument, do this that many times."
 (global-set-key (kbd "M-i") 'indent-region)
 (global-set-key (kbd "M-%") (quote query-replace-regexp))
 (global-set-key (kbd "<f3>") (quote query-replace-regexp))
-(global-set-key (kbd "ESC <up>") (quote move-line-up))
-(global-set-key (kbd "ESC <down>") (quote move-line-down))
 (global-set-key (kbd "C-c k") 'kill-line)
 (global-set-key (kbd "C-c C-k") 'kill-line)
 (global-set-key (kbd "C-c j") 'sc-join-line)
@@ -225,9 +223,21 @@ With argument, do this that many times."
 (global-set-key (kbd "C-c C-r") (quote rotate-among-files))
 (global-set-key (kbd "C-c r") (quote rotate-among-files))
 
-(require 'buffer-stack)
-(global-set-key (kbd "ESC <left>") (quote buffer-stack-down))
-(global-set-key (kbd "ESC <right>") (quote buffer-stack-up))
 (global-set-key (kbd "C-M-O") (quote ace-window))
 (global-set-key (kbd "M-`") (quote ace-window))
+(global-set-key (kbd "M-[ d") (quote windmove-left))
+(global-set-key (kbd "M-[ c") (quote windmove-right))
+(global-set-key (kbd "M-[ b") (quote windmove-down))
+(global-set-key (kbd "M-[ a") (quote windmove-up))
+
+(global-set-key (kbd "C-c w") (quote ace-window))
+(global-set-key (kbd "C-c 1") (quote select-window-1))
+(global-set-key (kbd "C-c 2") (quote select-window-2))
+(global-set-key (kbd "C-c 3") (quote select-window-3))
+(global-set-key (kbd "C-c 4") (quote select-window-4))
+(global-set-key (kbd "C-c 5") (quote select-window-5))
+(global-set-key (kbd "C-c 6") (quote select-window-6))
+(global-set-key (kbd "C-c 7") (quote select-window-7))
+(global-set-key (kbd "C-c 8") (quote select-window-8))
+
 (provide 'key-config)
