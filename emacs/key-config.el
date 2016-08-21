@@ -164,6 +164,16 @@ With argument, do this that many times."
   (interactive)
   (switch-to-buffer (other-buffer)))
 
+(defvar last-win nil)
+(defadvice select-window (before my-select-window (WINDOW &optional NORECORD) activate)
+  "record the previous window"
+  (if (not (eq (selected-window) WINDOW))
+      (setq last-win (selected-window))))
+
+(defun cycle-window()
+  (interactive)
+  (let ((w last-win))
+    (select-window w)))
 
 ;; Disable minimizing in x11
 (global-unset-key (kbd "C-z"))
@@ -239,5 +249,6 @@ With argument, do this that many times."
 (global-set-key (kbd "C-c 6") (quote select-window-6))
 (global-set-key (kbd "C-c 7") (quote select-window-7))
 (global-set-key (kbd "C-c 8") (quote select-window-8))
+(global-set-key (kbd "M-`") (quote cycle-window))
 
 (provide 'key-config)
