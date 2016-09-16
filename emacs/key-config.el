@@ -29,32 +29,6 @@ With argument, do this that many times."
   (interactive)
   (revert-buffer nil t))
 
-(defun move-line (&optional n)
-  "Move current line N (1) lines up/down leaving point in place."
-  (interactive "p")
-  (when (null n)
-    (setq n 1))
-  (let (col (current-column))
-    (beginning-of-line)
-    (next-line 1)
-    (transpose-lines n)
-    (previous-line 1)
-    (forward-char col)))
-
-(defun move-line-up (n)
-  "Moves current line N (1) lines up leaving point in place."
-  (interactive "p")
-  (move-line (if (null n) -1 (- n))))
-
-(defun move-line-down (n)
-  "Moves current line N (1) lines down leaving point in place."
-  (interactive "p")
-  (move-line (if (null n) 1 n)))
-
-(defun custom-goto-match-beginning ()
-  "Use with isearch hook to end search at first char of match."
-  (when isearch-forward (goto-char isearch-other-end)))
-
 (defadvice kill-ring-save (before slickcopy activate compile)
   "When called interactively with no active region, copy a single line instead."
   (interactive
@@ -97,7 +71,7 @@ With argument, do this that many times."
 (defun global-set-sticky-key (string func)
   (define-key sticky-map string func))
 
-(defvar rotate-exts '("-defs.h" "-inl.h" "Test.cpp" "_test.cpp" ".h" ".cpp" ".hpp"))
+(defvar rotate-exts '("-defs.h" "-inl.h" "Test.cpp" "_test.cpp" ".h" ".cpp" ".hpp" ".tcc"))
 
 (defun file-ends-with (filename suffix)
   (if (string-match (concat "^\\(.*\\)" suffix "$") filename)
@@ -122,41 +96,10 @@ With argument, do this that many times."
   (let* ((filename (buffer-file-name)))
     (if filename (do-rotate-among-files filename rotate-exts '()) nil)))
 
-(defun recentf-ido-find-file ()
-  "Find a recent file using Ido."
-  (interactive)
-  (let ((file (ido-completing-read "Choose recent file: " recentf-list nil t)))
-    (when file
-            (find-file file))))
-
 (defun sc-join-line ()
   (interactive)
   (delete-indentation)
   (delete-horizontal-space))
-
-(defun new-shell (shellName)
- "Creates a new shell "
- (interactive "sEnter Shell Name:")
- (save-excursion
-  (shell)
-  (comint-send-input)
-  (rename-buffer shellName)))
-
-(defun switch-to-shell ()
- "Switches to the shell specified by the last character typed"
- (interactive)
- (let* ((keys (recent-keys))
-        (len (length keys))
-        (key1 (if (> len 0)
-                  (string (event-basic-type (elt keys (- len 1))))
-                0))
-        (shell-buffer-name (concat "shell-" key1)))
-   (if (get-buffer shell-buffer-name)
-       (switch-to-buffer shell-buffer-name)
-     (new-shell shell-buffer-name))))
-
-(loop for i from 1 to 5 do
-     (global-set-sticky-key (read-kbd-macro (format "M-%d" i)) 'switch-to-shell))
 
 (defalias 'sl 'sort-lines)
 
@@ -188,18 +131,14 @@ With argument, do this that many times."
 (global-set-sticky-key (kbd "M-k") 'scroll-down)
 (global-set-sticky-key (kbd "C-o") 'other-window)
 (global-set-sticky-key (kbd "M-d") 'kill-line)
+(global-set-sticky-key (kbd "M-8") (quote match-paren))
 
-(global-set-key (kbd "M-8") (quote match-paren))
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 (global-set-key (kbd "C-q") 'kill-syntax-backward)
 (global-set-key (kbd "C-d") 'kill-syntax-forward)
-(global-set-key (kbd "C-x C-m") 'smex)
-(global-set-key (kbd "C-c C-m") 'smex)
-(global-set-key (kbd "C-x m") 'smex)
 (global-set-key (kbd "M-g") 'goto-line)
 (global-set-key (kbd "M-o") 'find-file-at-point)
-(global-set-key (kbd "M-t") 'recentf-ido-find-file)
 (global-set-key (kbd "C-c l") 'sort-lines)
 
 (global-set-key (kbd "C-x C-g") 'keyboard-quit)
@@ -211,44 +150,16 @@ With argument, do this that many times."
 
 (global-set-key (kbd "M-=") 'revert-no-confirm)
 (global-set-key (kbd "M-i") 'indent-region)
-(global-set-key (kbd "M-%") (quote query-replace-regexp))
-(global-set-key (kbd "<f3>") (quote query-replace-regexp))
+(global-set-key (kbd "M-%") 'query-replace-regexp)
+(global-set-key (kbd "<f3>") 'query-replace-regexp)
 (global-set-key (kbd "C-c k") 'kill-line)
 (global-set-key (kbd "C-c C-k") 'kill-line)
-(global-set-key (kbd "C-c j") 'sc-join-line)
-(global-set-key (kbd "C-c C-j") 'sc-join-line)
-
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
-(global-set-key (kbd "C-c M-x") 'smex-update-and-run)
-(global-set-key (kbd "C-b") 'ido-switch-buffer)
-(global-set-key (kbd "C-v") 'ido-switch-buffer)
-(global-set-key (kbd "M-e") 'ido-switch-buffer)
 (global-set-key (kbd "M-DEL") 'sc-join-line)
 
 (global-set-key (kbd "M-u") 'rename-uniquely)
 (global-set-key (kbd "M-RET") (quote vi-open-next-line))
-
-(global-set-key (kbd "C-c C-g") (quote magit-status))
 (global-set-key (kbd "C-c C-r") (quote rotate-among-files))
 (global-set-key (kbd "C-c r") (quote rotate-among-files))
-
-(global-set-key (kbd "C-M-O") (quote ace-window))
-(global-set-key (kbd "M-`") (quote ace-window))
-(global-set-key (kbd "M-[ d") (quote windmove-left))
-(global-set-key (kbd "M-[ c") (quote windmove-right))
-(global-set-key (kbd "M-[ b") (quote windmove-down))
-(global-set-key (kbd "M-[ a") (quote windmove-up))
-
-(global-set-key (kbd "C-c w") (quote ace-window))
-(global-set-key (kbd "C-c 1") (quote select-window-1))
-(global-set-key (kbd "C-c 2") (quote select-window-2))
-(global-set-key (kbd "C-c 3") (quote select-window-3))
-(global-set-key (kbd "C-c 4") (quote select-window-4))
-(global-set-key (kbd "C-c 5") (quote select-window-5))
-(global-set-key (kbd "C-c 6") (quote select-window-6))
-(global-set-key (kbd "C-c 7") (quote select-window-7))
-(global-set-key (kbd "C-c 8") (quote select-window-8))
 (global-set-key (kbd "M-`") (quote cycle-window))
 
 (provide 'key-config)

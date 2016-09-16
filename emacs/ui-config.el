@@ -3,34 +3,16 @@
 ;; color theme
 (require 'vibrant-ink-inspired)
 (setq color-theme-is-global t)
-
-
-;; Mode line
-(require 'window-numbering)
-(window-numbering-mode)
-(window-numbering-clear-mode-line)
-(require 'spaceline-config)
-(setq spaceline-process-p nil)
-(setq spaceline-minor-modes-p nil)
-(setq spaceline-buffer-encoding-abbrev-p nil)
-(setq spaceline-version-control-p nil)
-(setq spaceline-window-numbers-unicode nil)
-(spaceline--theme
- '((window-number buffer-modified) :face highlight-face :separator " | ")
- '(buffer-id :face highlight-face))
 (color-theme-vibrant-ink-inspired)
-
 
 ;; Line highlight
 (global-hl-line-mode 1)
 (set-face-background 'hl-line "#3e4446")
 (set-face-foreground 'highlight nil)
 
-
 ;; tabs
 (setq tab-width 2)
 (setq-default indent-tabs-mode nil)
-
 
 ;; search
 ;; Always end searches at the beginning of the matching expression.
@@ -41,7 +23,6 @@
   "Go to beginning of match."
   (when isearch-forward (goto-char isearch-other-end)))
 
-
 ;; Turn off UI element
 (setq ring-bell-function 'ignore)
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
@@ -49,29 +30,17 @@
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (setq inhibit-startup-message t)  ;; No splash screen
 
-
-;; Ido
-(require 'ido)
-(ido-mode 1)
-(setq ido-enable-flex-matching t)
-(require 'ido-vertical-mode)
-(ido-vertical-mode 1)
-(setq ido-vertical-define-keys 'C-n-C-p-up-and-down)
-(require 'smex)
-(smex-initialize)
-
-
 ;; Tweak
 (column-number-mode 1)
 (global-font-lock-mode 1)
 (show-paren-mode 1)
+(electric-pair-mode 1)
 (set-default 'truncate-lines t)
 (setq show-trailing-whitespace t)
-(cua-mode 0)
+
 ;; highlight marked region
 (transient-mark-mode 1)
 (defalias 'yes-or-no-p 'y-or-n-p)  ;; y/n for yes/no
-(require 'smooth-scrolling)
 (setq flyspell-issue-message-flag nil)
 (put 'narrow-to-region 'disabled nil)
 (require 'uniquify)
@@ -85,29 +54,32 @@
 ;; Automatically beblances windows
 (defadvice delete-window (after rebalance-d nil activate)
   "Calls `balance-windows' after deleting a window."
-  (when (interactive-p)
+  (when (called-interactively-p 'any)
     (balance-windows)))
 
 (defadvice split-window-vertically (after rebalance-h nil activate)
   "Calls `balance-windows' after splitting a window."
-  (when (interactive-p)
+  (when (called-interactively-p 'any)
     (balance-windows)))
 
 (defadvice split-window-below (after rebalance-h nil activate)
   "Calls `balance-windows' after splitting a window."
-  (when (interactive-p)
+  (when (called-interactively-p 'any)
     (balance-windows)))
 
 (defadvice split-window-horizontally (after rebalance-h nil activate)
-  "Calls `balance-windows' after splitting a window."
-  (when (interactive-p)
+  "Calls `called-balance-windows' after splitting a window."
+  (when (called-interactively-p 'any)
     (balance-windows)))
 
 (defadvice split-window-right (after rebalance-h nil activate)
-  "Calls `balance-windows' after splitting a window."
-  (when (interactive-p)
+  "Calls `called-balance-windows' after splitting a window."
+  (when (called-interactively-p 'any)
     (balance-windows)))
 
+;; always split window vertically by default
+(setq split-height-threshold nil)
+(setq split-width-threshold 160)
 
 ;; Make dabbrev mode more convinient.
 (setq dabbrev--eliminate-newlines nil)
@@ -116,7 +88,13 @@
 (setq dabbrev-case-replace nil)
 (setq dabbrev-ignored-buffer-names nil)
 (setq dabbrev-upcase-means-case-search nil)
-
+(setq hippie-expand-try-functions-list
+      '(try-complete-file-name-partially try-complete-file-name
+      try-expand-all-abbrevs try-expand-dabbrev
+      try-expand-dabbrev-all-buffers try-expand-dabbrev-from-kill
+      try-complete-lisp-symbol-partially try-complete-lisp-symbol
+      try-expand-line try-expand-whole-kill))
+(bind-key "M-/" 'hippie-expand)
 
 ;; Make some buffers only pop up specific places.
 (defun my-display-completions (buf)
@@ -142,13 +120,7 @@
 (add-to-list 'special-display-buffer-names '("*compilation*" my-display-completions))
 (add-to-list 'special-display-buffer-names '("*grep*" my-display-completions))
 (add-to-list 'special-display-buffer-names '("*Async Shell Command*" my-display-completions))
-
-
-;; recnetf
-(require 'recentf)
-(recentf-mode 1)
-(run-at-time nil (* 12 3600) 'recentf-save-list)
-
+(add-to-list 'special-display-buffer-names '("*Backtrace*" my-display-completions))
 
 ;; backup
 (defconst use-backup-dir t)
@@ -161,8 +133,7 @@
 (setq backup-inhibited t)
 (setq auto-save-default t)
 
-
 ;; make gc run less often
-(setq gc-cons-threshold 1000000000)
+(setq gc-cons-threshold 100000000)
 
 (provide 'ui-config)
