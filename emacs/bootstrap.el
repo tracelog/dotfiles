@@ -54,6 +54,8 @@ Return a list of installed packages or nil for every skipped package."
    ("C-x C-m"  . counsel-M-x)
    ("C-c C-m" . counsel-M-x)
    ("C-x m" . counsel-M-x)
+   ("C-x C-f" . counsel-find-file)
+   ("<f1> c" . counsel-describe-face)
    :map ivy-minibuffer-map
    ("M-y" . ivy-next-line))
   :ensure t
@@ -70,6 +72,33 @@ Return a list of installed packages or nil for every skipped package."
   (require 'subr-x)
   :ensure t)
 
+(use-package color-theme-sanityinc-tomorrow
+  :config
+  (defconst color-theme-sanityinc-tomorrow-colors
+    '((vibrant . ((background . "#2d2d2d")
+                  (current-line . "#393939")
+                  (selection . "#3e4446")
+                  (foreground . "#cccccc")
+                  (comment . "#999999")
+                  (red . "#f2777a")           ; warning
+                  (orange . "#60DCFF")        ; function name
+                  (yellow . "#66cccc")        ; variable name
+                  (green . "#ffcc66")         ; keyword
+                  (aqua . "#99cc99")          ; string
+                  (purple . "#cc99cc")        ; builtin
+                  (blue . "color-39")))))       ; type
+
+  (defun color-theme-sanityinc-tomorrow-vibrant ()
+    "Apply the tomorrow blue theme."
+    (interactive)
+    (color-theme-sanityinc-tomorrow 'vibrant))
+  (color-theme-sanityinc-tomorrow--define-theme vibrant)
+  (color-theme-sanityinc-tomorrow-vibrant)
+  ;; overwrite more face mapping.
+  (set-face-foreground 'font-lock-constant-face "color-158")
+  (set-face-foreground 'font-lock-type-face "#cc99cc")
+  (set-face-foreground 'font-lock-preprocessor-face "orange"))
+
 (use-package spaceline
   :ensure t
   :config
@@ -80,8 +109,11 @@ Return a list of installed packages or nil for every skipped package."
   (setq spaceline-version-control-p nil)
   (setq spaceline-window-numbers-unicode nil)
   (custom-set-faces
-   '(mode-line-buffer-id ((t (:weight bold))))
-   '(powerline-active1 ((t (:inherit mode-line :background "grey22" :foreground "color-39")))))
+   '(mode-line-buffer-id ((t (:weight bold :foreground "color-240"))))
+   '(powerline-active1 ((t (:inherit mode-line :background "grey22" :foreground "color-39"))))
+   '(powerline-inactive1 ((t (:inherit mode-line :background "black" :foreground "#a8a8a8"))))
+   '(powerline-inactive2 ((t (:inherit mode-line :background "grey22" :foreground "#a8a8a8"))))
+   )
   (spaceline--theme
    '((window-number buffer-modified) :face highlight-face :separator " | ")
    '(buffer-id :face highlight-face)))
@@ -90,6 +122,12 @@ Return a list of installed packages or nil for every skipped package."
   :ensure t)
 
 (use-package markdown-mode
+  :mode "\\.md\\'"
+  :config
+  (defun my-markdown-mode-hook ()
+    (setq truncate-lines nil)
+    (setq set-fill-column 80))
+  (add-hook 'markdown-mode-hook 'my-markdown-mode-hook)
   :ensure t
   :defer t)
 
@@ -113,14 +151,14 @@ Return a list of installed packages or nil for every skipped package."
   :ensure t)
 
 (use-package window-numbering
+  :init
+  (defvar window-numbering-keymap (make-sparse-keymap))
   :bind
   (("C-c 1" . select-window-1)
    ("C-c 2" . select-window-2)
    ("C-c 3" . select-window-3)
    ("C-c 4" . select-window-4)
-   ("C-c 5" . select-window-5)
-   ("C-c 6" . select-window-6)
-   ("C-c 7" . select-window-7))
+   ("C-c 5" . select-window-5))
   :ensure t
   :config
   (window-numbering-mode)

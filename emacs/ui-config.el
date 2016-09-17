@@ -1,14 +1,7 @@
 ;;; ui-config.el ---
 
-;; color theme
-(require 'vibrant-ink-inspired)
-(setq color-theme-is-global t)
-(color-theme-vibrant-ink-inspired)
-
 ;; Line highlight
 (global-hl-line-mode 1)
-(set-face-background 'hl-line "#3e4446")
-(set-face-foreground 'highlight nil)
 
 ;; tabs
 (setq tab-width 2)
@@ -36,6 +29,7 @@
 (show-paren-mode 1)
 (electric-pair-mode 1)
 (set-default 'truncate-lines t)
+(global-visual-line-mode)
 (setq show-trailing-whitespace t)
 
 ;; highlight marked region
