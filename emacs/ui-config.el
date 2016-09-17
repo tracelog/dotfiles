@@ -1,14 +1,7 @@
 ;;; ui-config.el ---
 
-;; color theme
-(require 'vibrant-ink-inspired)
-(setq color-theme-is-global t)
-(color-theme-vibrant-ink-inspired)
-
 ;; Line highlight
 (global-hl-line-mode 1)
-(set-face-background 'hl-line "#3e4446")
-(set-face-foreground 'highlight nil)
 
 ;; tabs
 (setq tab-width 2)
@@ -35,7 +28,10 @@
 (global-font-lock-mode 1)
 (show-paren-mode 1)
 (electric-pair-mode 1)
+(electric-quote-mode 1)
 (set-default 'truncate-lines t)
+(setq truncate-lines t)
+(global-visual-line-mode)
 (setq show-trailing-whitespace t)
 
 ;; highlight marked region
@@ -135,5 +131,8 @@
 
 ;; make gc run less often
 (setq gc-cons-threshold 100000000)
+
+;; minibuffer with minibuffer
+;; (setq enable-recursive-minibuffers t)
 
 (provide 'ui-config)

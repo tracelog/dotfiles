@@ -1,5 +1,7 @@
 ;;; bootstrap.el ---
 
+(defconst local-package-dir "~/.dotfiles/emacs")
+
 ;; Install packages
 (require 'package)
 (add-to-list 'package-archives
@@ -36,7 +38,14 @@ Return a list of installed packages or nil for every skipped package."
          :map ivy-minibuffer-map
          ("C-v". ivy-restrict-to-matches)
          ("C-s". ivy-next-line)
-         ("C-r". ivy-previous-line))
+         ("C-r". ivy-previous-line)
+         ("C-c o". ivy-occur)
+         ("C-c C-o". ivy-occur)
+         ("M-y". yank-pop)
+         ("RET". ivy-alt-done)
+         ("M-RET". ivy-done)
+         ("M-!". ivy-dispatching-done)
+         ("<f2>" . hydra-ivy/body))
   :ensure t
   :config
   (ivy-mode 1)
@@ -54,10 +63,14 @@ Return a list of installed packages or nil for every skipped package."
    ("C-x C-m"  . counsel-M-x)
    ("C-c C-m" . counsel-M-x)
    ("C-x m" . counsel-M-x)
+   ("C-x C-f" . counsel-find-file)
+   ("<f1> c" . counsel-describe-face)
    :map ivy-minibuffer-map
    ("M-y" . ivy-next-line))
+
   :ensure t
   :config
+  (setq ivy-extra-directories nil)
   (counsel-mode 1))
 
 (use-package swiper
@@ -65,10 +78,38 @@ Return a list of installed packages or nil for every skipped package."
   (("M-s" . swiper)
    :map swiper-map
    ("C-r" . swiper-query-replace)
+   ("M-%" . swiper-query-replace)
    )
   :config
   (require 'subr-x)
   :ensure t)
+
+(use-package color-theme-sanityinc-tomorrow
+  :config
+  (defconst color-theme-sanityinc-tomorrow-colors
+    '((vibrant . ((background . "#2d2d2d")
+                  (current-line . "#393939")
+                  (selection . "#3e4446")
+                  (foreground . "#cccccc")
+                  (comment . "#999999")
+                  (red . "#f2777a")           ; warning
+                  (orange . "#60DCFF")        ; function name
+                  (yellow . "#66cccc")        ; variable name
+                  (green . "#ffcc66")         ; keyword
+                  (aqua . "#99cc99")          ; string
+                  (purple . "#cc99cc")        ; builtin
+                  (blue . "color-39")))))       ; type
+
+  (defun color-theme-sanityinc-tomorrow-vibrant ()
+    "Apply the tomorrow blue theme."
+    (interactive)
+    (color-theme-sanityinc-tomorrow 'vibrant))
+  (color-theme-sanityinc-tomorrow--define-theme vibrant)
+  (color-theme-sanityinc-tomorrow-vibrant)
+  ;; overwrite more face mapping.
+  (set-face-foreground 'font-lock-constant-face "color-158")
+  (set-face-foreground 'font-lock-type-face "#cc99cc")
+  (set-face-foreground 'font-lock-preprocessor-face "orange"))
 
 (use-package spaceline
   :ensure t
@@ -80,8 +121,11 @@ Return a list of installed packages or nil for every skipped package."
   (setq spaceline-version-control-p nil)
   (setq spaceline-window-numbers-unicode nil)
   (custom-set-faces
-   '(mode-line-buffer-id ((t (:weight bold))))
-   '(powerline-active1 ((t (:inherit mode-line :background "grey22" :foreground "color-39")))))
+   '(mode-line-buffer-id ((t (:weight bold :foreground "color-240"))))
+   '(powerline-active1 ((t (:inherit mode-line :background "grey22" :foreground "color-39"))))
+   '(powerline-inactive1 ((t (:inherit mode-line :background "black" :foreground "#a8a8a8"))))
+   '(powerline-inactive2 ((t (:inherit mode-line :background "grey22" :foreground "#a8a8a8"))))
+   )
   (spaceline--theme
    '((window-number buffer-modified) :face highlight-face :separator " | ")
    '(buffer-id :face highlight-face)))
@@ -90,6 +134,12 @@ Return a list of installed packages or nil for every skipped package."
   :ensure t)
 
 (use-package markdown-mode
+  :mode "\\.md\\'"
+  :config
+  (defun my-markdown-mode-hook ()
+    (setq truncate-lines nil)
+    (setq set-fill-column 80))
+  (add-hook 'markdown-mode-hook 'my-markdown-mode-hook)
   :ensure t
   :defer t)
 
@@ -113,14 +163,14 @@ Return a list of installed packages or nil for every skipped package."
   :ensure t)
 
 (use-package window-numbering
+  :init
+  (defvar window-numbering-keymap (make-sparse-keymap))
   :bind
   (("C-c 1" . select-window-1)
    ("C-c 2" . select-window-2)
    ("C-c 3" . select-window-3)
    ("C-c 4" . select-window-4)
-   ("C-c 5" . select-window-5)
-   ("C-c 6" . select-window-6)
-   ("C-c 7" . select-window-7))
+   ("C-c 5" . select-window-5))
   :ensure t
   :config
   (window-numbering-mode)
@@ -161,6 +211,7 @@ Return a list of installed packages or nil for every skipped package."
   (:map shell-mode-map
    ("M-r" . counsel-shell-history))
   :init
+  (setenv "PAGER" "cat")
   (defun new-shell (shellName)
     "Creates a new shell "
     (interactive "sEnter Shell Name:")
@@ -185,21 +236,87 @@ Return a list of installed packages or nil for every skipped package."
   (loop for i from 1 to 5 do
         (global-set-key (read-kbd-macro (format "M-%d" i)) 'switch-to-shell))
   :config
+  (setq comint-prompt-read-only t)
+  (setq dirtrack-list '("^\\[[a-z]+@[a-z0-9.]+ \\(.*\\)\\]" 1 nil))
+  (dirtrack-mode 1)
   (setq ansi-color-names-vector
-        ["black" "red4" "green4" "yellow4" "DarkSlateGray2" "magenta4" "cyan4" "white"]))
+        ["black" "red4" "green4" "yellow4" "DarkSlateGray2" "magenta4" "cyan4" "white"])
+  (ansi-color-for-comint-mode-on))
 
 (use-package rtags
   :config
   (setq rtags-autostart-diagnostics t)
   (rtags-diagnostics)
-  (setq rtags-completions-enabled t)
-  (push 'company-rtags company-backends)
+  ;;(setq rtags-completions-enabled t)
+  ;;(push 'company-rtags company-backends)
   (rtags-enable-standard-keybindings c-mode-base-map "M-r")
   :ensure t)
 
 (use-package zzz-to-char
   :bind (("M-z" . zzz-to-char))
   :ensure t)
+
+(use-package multiple-cursors
+  :ensure t)
+
+(use-package try
+  :ensure t)
+
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode 1)
+  (which-key-setup-side-window-right-bottom))
+
+(use-package ui-config
+  :load-path local-package-dir)
+
+(use-package key-config
+  :load-path local-package-dir
+  :bind
+  (("C-s" . isearch-forward-regexp)
+   ("C-r" . isearch-backward-regexp)
+   ("C-q" . kill-syntax-backward)
+   ("C-d" . delete-char)
+   ("M-d" . kill-syntax-forward)
+   ("M-g" . goto-line)
+   ("M-o" . find-file-at-point)
+   ("C-c l" . sort-lines)
+   ("C-x C-g" . keyboard-quit)
+   ("<f11>" . revert-no-confirm)
+   ("<f12>" . cycle-buffer)
+   ("<f6>" . next-error)
+   ("<f9>" . repeat-complex-command)
+   ("M-i" . indent-region)
+   ("M-%" . query-replace-regexp)
+   ("<f3>" . query-replace-regexp)
+   ("M-DEL" . sc-join-line)
+   ("M-`" . quote cycle-window))
+
+   :map sticky-map
+   ("C-j". next-line)
+   ("C-k". previous-line)
+   ("C-l". forward-char)
+   ("C-h". backward-char)
+   ("M-l". forward-word)
+   ("M-h". backward-word)
+   ("M-j". scroll-up)
+   ("M-k". scroll-down)
+   ("C-o". other-window)
+   ("M-d". kill-line)
+   ("M-8" . match-paren)
+
+   :map c-mode-base-map
+   ("C-c c" . recompile)
+   ("C-c C-c" . recompile)
+   ("C-c C-r" . rotate-among-files)
+   ("C-c r" . rotate-among-files)))
+
+(use-package coding-config
+  :load-path local-package-dir)
+
+(use-package local-config
+  :load-path local-package-dir)
 
 (server-start nil)
 

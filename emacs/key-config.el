@@ -43,14 +43,6 @@ With argument, do this that many times."
      (list (line-beginning-position)
  	   (line-beginning-position 2)))))
 
-(defun vi-open-next-line (arg)
-  "Move to the next line (like vi) and then opens a line."
-  (interactive "p")
-  (end-of-line)
-  (open-line arg)
-  (next-line 1)
-  (indent-according-to-mode))
-
 (defun match-paren (arg)
   "Go to the matching parenthesis if on parenthesis otherwise insert %."
   (interactive "p")
@@ -118,48 +110,11 @@ With argument, do this that many times."
   (let ((w last-win))
     (select-window w)))
 
+(defun toggle-line-wrap ()
+  (interactive)
+  (setq truncate-lines (not truncate-lines)))
+
 ;; Disable minimizing in x11
 (global-unset-key (kbd "C-z"))
-
-(global-set-sticky-key (kbd "C-j") 'next-line)
-(global-set-sticky-key (kbd "C-k") 'previous-line)
-(global-set-sticky-key (kbd "C-l") 'forward-char)
-(global-set-sticky-key (kbd "C-h") 'backward-char)
-(global-set-sticky-key (kbd "M-l") 'forward-word)
-(global-set-sticky-key (kbd "M-h") 'backward-word)
-(global-set-sticky-key (kbd "M-j") 'scroll-up)
-(global-set-sticky-key (kbd "M-k") 'scroll-down)
-(global-set-sticky-key (kbd "C-o") 'other-window)
-(global-set-sticky-key (kbd "M-d") 'kill-line)
-(global-set-sticky-key (kbd "M-8") (quote match-paren))
-
-(global-set-key (kbd "C-s") 'isearch-forward-regexp)
-(global-set-key (kbd "C-r") 'isearch-backward-regexp)
-(global-set-key (kbd "C-q") 'kill-syntax-backward)
-(global-set-key (kbd "C-d") 'kill-syntax-forward)
-(global-set-key (kbd "M-g") 'goto-line)
-(global-set-key (kbd "M-o") 'find-file-at-point)
-(global-set-key (kbd "C-c l") 'sort-lines)
-
-(global-set-key (kbd "C-x C-g") 'keyboard-quit)
-
-(global-set-key (kbd "<f11>") 'revert-no-confirm)
-(global-set-key (kbd "<f12>") 'cycle-buffer)
-(global-set-key (kbd "<f6>") 'next-error)
-(global-set-key (kbd "<f9>") 'repeat-complex-command)
-
-(global-set-key (kbd "M-=") 'revert-no-confirm)
-(global-set-key (kbd "M-i") 'indent-region)
-(global-set-key (kbd "M-%") 'query-replace-regexp)
-(global-set-key (kbd "<f3>") 'query-replace-regexp)
-(global-set-key (kbd "C-c k") 'kill-line)
-(global-set-key (kbd "C-c C-k") 'kill-line)
-(global-set-key (kbd "M-DEL") 'sc-join-line)
-
-(global-set-key (kbd "M-u") 'rename-uniquely)
-(global-set-key (kbd "M-RET") (quote vi-open-next-line))
-(global-set-key (kbd "C-c C-r") (quote rotate-among-files))
-(global-set-key (kbd "C-c r") (quote rotate-among-files))
-(global-set-key (kbd "M-`") (quote cycle-window))
 
 (provide 'key-config)

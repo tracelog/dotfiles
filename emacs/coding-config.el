@@ -13,26 +13,6 @@
   (toggle-read-only))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
-;; Shell Mode
-(setq comint-prompt-read-only t)
-(add-hook 'shell-mode-hook '(lambda ()
-                              (toggle-truncate-lines 1)
-                              (setq show-trailing-whitespace nil)))
-(setq ansi-color-names-vector
-      ["black" "red4" "green4" "yellow4" "DarkSlateGray2" "magenta4" "cyan4" "white"])
-
-(condition-case ()
-    (progn
-      (require 'ansi-color)
-      (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
-      (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-      (setq ansi-color-map (ansi-color-make-color-map)))
-  (error (message "Skipping ansi-color")))
-
-(add-hook 'shell-mode-hook
-          '(lambda ()
-             (setq dirtrack-list '("^\\[[a-z]+@[a-z0-9.]+ \\(.*\\)\\]" 1 nil))
-             (dirtrack-mode 1)))
 
 ;; Coding modes
 (dolist (mode '(c++-mode java-mode python-mode thrift-mode))

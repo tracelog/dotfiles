@@ -8,4 +8,4 @@ br = !hg bookmarks
 cp = !hg graft
 stash = !hg shelve
 unstash = !hg unshelve
-last = !hg log -r . --template "{files}\n"
+last = !hg log -r . --stat
