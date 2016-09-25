@@ -57,9 +57,6 @@ With argument, do this that many times."
      (concat "/sudo:root@localhost:"
 	     buffer-file-name))))
 
-(setq sticky-map (make-sparse-keymap))
-(setq emulation-mode-map-alists (list (list (cons 'sticky-map sticky-map))))
-
 (defun global-set-sticky-key (string func)
   (define-key sticky-map string func))
 

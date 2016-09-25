@@ -85,6 +85,7 @@ Return a list of installed packages or nil for every skipped package."
   :ensure t)
 
 (use-package color-theme-sanityinc-tomorrow
+  :ensure t
   :config
   (defconst color-theme-sanityinc-tomorrow-colors
     '((vibrant . ((background . "#2d2d2d")
@@ -239,9 +240,12 @@ Return a list of installed packages or nil for every skipped package."
   (setq comint-prompt-read-only t)
   (setq dirtrack-list '("^\\[[a-z]+@[a-z0-9.]+ \\(.*\\)\\]" 1 nil))
   (dirtrack-mode 1)
+  (require 'ansi-color)
   (setq ansi-color-names-vector
         ["black" "red4" "green4" "yellow4" "DarkSlateGray2" "magenta4" "cyan4" "white"])
-  (ansi-color-for-comint-mode-on))
+  (ansi-color-for-comint-mode-on)
+  :bind ((:map shell-mode-map
+               ("TAB" . company-manual-begin))))
 
 (use-package rtags
   :config
@@ -273,6 +277,13 @@ Return a list of installed packages or nil for every skipped package."
 
 (use-package key-config
   :load-path local-package-dir
+
+  :demand
+
+  :init
+  (setq sticky-map (make-sparse-keymap))
+  (setq emulation-mode-map-alists (list (list (cons 'sticky-map sticky-map))))
+
   :bind
   (("C-s" . isearch-forward-regexp)
    ("C-r" . isearch-backward-regexp)
@@ -291,7 +302,7 @@ Return a list of installed packages or nil for every skipped package."
    ("M-%" . query-replace-regexp)
    ("<f3>" . query-replace-regexp)
    ("M-DEL" . sc-join-line)
-   ("M-`" . quote cycle-window))
+   ("M-`" . cycle-window)
 
    :map sticky-map
    ("C-j". next-line)
