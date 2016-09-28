@@ -39,3 +39,6 @@ export EDITOR=emacsclient
 if [ -f ~/.local.bashrc ]; then
     . ~/.local.bashrc
 fi
+
+
+PS1="[\u \w] "

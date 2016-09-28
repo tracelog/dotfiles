@@ -1,4 +1,8 @@
 ;; ------------------------------ Functions ------------------------------
+(defun custom-goto-match-beginning ()
+  "Use with isearch hook to end search at first char of match."
+  (when isearch-forward (goto-char isearch-other-end)))
+
 (defun delete-word (arg)
   "Delete characters forward until encountering the end of a word.
 With argument, do this that many times."

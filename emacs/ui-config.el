@@ -1,4 +1,4 @@
-;;; ui-config.el ---
+;; ui-config.el ---
 
 ;; Line highlight
 (global-hl-line-mode 1)

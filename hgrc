@@ -1,11 +1,21 @@
 [ui]
 username = Stephen Chen <tracelog@fb.com>
 
+# [color]
+# #mode=terminfo
+# #Custom colours
+# # color.orange=202
+# color.lightyellow=191
+# # color.darkorange=220
+# color.brightyellow=226
+
+# log.rev=lightyellow
+
 [alias]
-l = !hg log -G --template '\033[1;32m{bookmarks} \033[0;33m{node|short} \033[0m({date|age}) \033[1;34m{desc|firstline} \033[0;36m{author|user}'
+l = !hg log --template '\033[0;33m{node|short} \033[0m({date|age}) \033[1;34m{desc|firstline} \033[0;36m{author|user} \n  {join(files, "\n  ")} \n\n' $@
 p = !hg summary
 br = !hg bookmarks
 cp = !hg graft
 stash = !hg shelve
 unstash = !hg unshelve
-last = !hg log -r . --stat
+last = !hg log --template '\033[0;33m{node|short} \033[0m({date|age}) \033[1;34m{desc|firstline} \033[0;36m{author|user} \n  {join(files, "\n  ")} \n\n' -l $1

@@ -208,11 +208,12 @@ Return a list of installed packages or nil for every skipped package."
   :ensure t)
 
 (use-package shell
+  :demand
   :bind
   (:map shell-mode-map
    ("M-r" . counsel-shell-history))
   :init
-  (setenv "PAGER" "cat")
+  (setenv "ESHELL" "~/bin/zsh")
   (defun new-shell (shellName)
     "Creates a new shell "
     (interactive "sEnter Shell Name:")
@@ -237,15 +238,15 @@ Return a list of installed packages or nil for every skipped package."
   (loop for i from 1 to 5 do
         (global-set-key (read-kbd-macro (format "M-%d" i)) 'switch-to-shell))
   :config
+  (setenv "PAGER" "cat")
   (setq comint-prompt-read-only t)
-  (setq dirtrack-list '("^\\[[a-z]+@[a-z0-9.]+ \\(.*\\)\\]" 1 nil))
-  (dirtrack-mode 1)
+  (setq dirtrack-list '("^%[^a-z0-9.]+\\[[a-z]+ \\(.*\\)\\]" 1))
+  (add-hook 'shell-mode-hook 'dirtrack-mode)
   (require 'ansi-color)
   (setq ansi-color-names-vector
         ["black" "red4" "green4" "yellow4" "DarkSlateGray2" "magenta4" "cyan4" "white"])
   (ansi-color-for-comint-mode-on)
-  :bind ((:map shell-mode-map
-               ("TAB" . company-manual-begin))))
+  (setq yas-fallback-behavior '(apply company-manual-begin . ())))
 
 (use-package rtags
   :config
@@ -273,7 +274,8 @@ Return a list of installed packages or nil for every skipped package."
   (which-key-setup-side-window-right-bottom))
 
 (use-package ui-config
-  :load-path local-package-dir)
+  :load-path local-package-dir
+  :demand)
 
 (use-package key-config
   :load-path local-package-dir
