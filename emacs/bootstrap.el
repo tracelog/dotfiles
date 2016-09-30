@@ -138,8 +138,8 @@ Return a list of installed packages or nil for every skipped package."
   :mode "\\.md\\'"
   :init
   (defun my-markdown-mode-hook ()
-    (setq truncate-lines nil)
-    (setq set-fill-column 80))
+    (setq-local truncate-lines nil)
+    (setq-local set-fill-column 80))
   (add-hook 'markdown-mode-hook 'my-markdown-mode-hook)
   :ensure t
   :defer t)
@@ -219,7 +219,7 @@ Return a list of installed packages or nil for every skipped package."
   (setq comint-prompt-read-only t)
   (setq dirtrack-list '("^%[^a-z0-9.]+\\[[a-z]+ \\(.*\\)\\]" 1))
   (add-hook 'shell-mode-hook (lambda()
-                               (setq yas-fallback-behavior '(apply company-manual-begin . ()))))
+                               (setq-local yas-fallback-behavior '(apply company-manual-begin . ()))))
 
   (defun new-shell (shellName)
     "Creates a new shell "
