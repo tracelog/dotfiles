@@ -34,11 +34,7 @@
  '(pabbrev-minimal-expansion-p t)
  '(pabbrev-scavenge-some-chunk-size 40)
  '(pabbrev-thing-at-point-constituent (quote symbol))
- '(package-selected-packages
-   (quote
-q    (projectile fasd pager key-seq which-key nyan-mode ivy-hydra counsel-dash try multiple-cursors color-theme-sanityinc-tomorrow zzz-to-char rtags yatemplate wgrep company commpany use-package
-                (use-package)
-                flx counsel ivy window-numbering window-number undo-tree spaceline smooth-scrolling smex moe-theme markdown-mode magit-find-file keyfreq ido-vertical-mode find-file-in-repository find-file-in-project color-theme buffer-stack ample-theme ace-window)))
+ '(package-selected-packages (quote (company-shell)))
  '(show-paren-mode t)
  '(transient-mark-mode t)
  '(vc-follow-symlinks t))

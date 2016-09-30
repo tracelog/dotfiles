@@ -1,5 +1,6 @@
 [ui]
 username = Stephen Chen <tracelog@fb.com>
+ignore = ~/.hgignore
 
 # [color]
 # #mode=terminfo

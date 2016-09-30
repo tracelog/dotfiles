@@ -214,6 +214,13 @@ Return a list of installed packages or nil for every skipped package."
    ("M-r" . counsel-shell-history))
   :init
   (setenv "ESHELL" "~/bin/zsh")
+  (setenv "PAGER" "cat")
+  (add-hook 'shell-mode-hook 'dirtrack-mode)
+  (setq comint-prompt-read-only t)
+  (setq dirtrack-list '("^%[^a-z0-9.]+\\[[a-z]+ \\(.*\\)\\]" 1))
+  (add-hook 'shell-mode-hook (lambda()
+                               (setq yas-fallback-behavior '(apply company-manual-begin . ()))))
+
   (defun new-shell (shellName)
     "Creates a new shell "
     (interactive "sEnter Shell Name:")
@@ -238,15 +245,10 @@ Return a list of installed packages or nil for every skipped package."
   (loop for i from 1 to 5 do
         (global-set-key (read-kbd-macro (format "M-%d" i)) 'switch-to-shell))
   :config
-  (setenv "PAGER" "cat")
-  (setq comint-prompt-read-only t)
-  (setq dirtrack-list '("^%[^a-z0-9.]+\\[[a-z]+ \\(.*\\)\\]" 1))
-  (add-hook 'shell-mode-hook 'dirtrack-mode)
   (require 'ansi-color)
   (setq ansi-color-names-vector
         ["black" "red4" "green4" "yellow4" "DarkSlateGray2" "magenta4" "cyan4" "white"])
-  (ansi-color-for-comint-mode-on)
-  (setq yas-fallback-behavior '(apply company-manual-begin . ())))
+  (ansi-color-for-comint-mode-on))
 
 (use-package rtags
   :config
@@ -272,6 +274,21 @@ Return a list of installed packages or nil for every skipped package."
   :config
   (which-key-mode 1)
   (which-key-setup-side-window-right-bottom))
+
+(use-package python
+  :mode ("\\.py\\'" . python-mode)
+  :interpreter ("python" . python-mode)
+  :bind
+  (:map python-mode-map
+        ("<RET>" . electric-newline-and-maybe-indent)
+        ("M-`" . python-shell-switch-to-shell))
+  :init
+  (add-hook 'python-mode-hook (lambda()
+                                (flyspell-prog-mode)
+                                (turn-on-eldoc-mode)
+                                (setq show-trailing-whitespace t)
+                                )))
+
 
 (use-package ui-config
   :load-path local-package-dir
