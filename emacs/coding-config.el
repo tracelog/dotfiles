@@ -45,7 +45,6 @@
 
 (add-hook 'python-mode-hook
 	  (lambda()
-            (abbrev-mode 1)
 	    (define-key python-mode-map "\C-m" 'newline-and-indent)
             (define-key python-mode-map "\C-c\C-b" 'python-send-buffer)
             (define-key python-mode-map "\C-c\C-e" 'python-send-defun)

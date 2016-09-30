@@ -136,7 +136,7 @@ Return a list of installed packages or nil for every skipped package."
 
 (use-package markdown-mode
   :mode "\\.md\\'"
-  :config
+  :init
   (defun my-markdown-mode-hook ()
     (setq truncate-lines nil)
     (setq set-fill-column 80))
