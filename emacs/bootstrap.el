@@ -34,7 +34,6 @@ Return a list of installed packages or nil for every skipped package."
          ("C-b" . ivy-switch-buffer)
          ("C-v" . ivy-switch-buffer)
          ("M-e" . ivy-switch-buffer)
-         ("M-t" . ivy-switch-buffer)
          :map ivy-minibuffer-map
          ("C-v". ivy-restrict-to-matches)
          ("C-s". ivy-next-line)
@@ -110,7 +109,10 @@ Return a list of installed packages or nil for every skipped package."
   ;; overwrite more face mapping.
   (set-face-foreground 'font-lock-constant-face "color-158")
   (set-face-foreground 'font-lock-type-face "#cc99cc")
-  (set-face-foreground 'font-lock-preprocessor-face "orange"))
+  (set-face-foreground 'font-lock-preprocessor-face "orange")
+  (setq custom-enabled-themes '(sanityinc-tomorrow-vibrant))
+  (setq custom-safe-themes
+    '("628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
 
 (use-package spaceline
   :ensure t
@@ -154,13 +156,13 @@ Return a list of installed packages or nil for every skipped package."
 
 (use-package buffer-stack
   :bind
-  (("ESC <left>" . buffer-stack-down)
-   ("ESC <right>" . buffer-stack-up))
+  (("M-<left>" . buffer-stack-down)
+   ("M-<right>" . buffer-stack-up))
   :ensure t)
 
 (use-package ace-window
   :bind
-  (("C-M-O" . ace-window))
+  (("M-<up>" . ace-window))
   :ensure t)
 
 (use-package window-numbering
@@ -179,10 +181,10 @@ Return a list of installed packages or nil for every skipped package."
 
 (use-package windmove
   :bind
-  (("C-M-h" . windmove-left)
-   ("C-M-l" . windmove-right)
-   ("C-M-j" . windmove-down)
-   ("C-M-k" . windmove-up))
+  (("C-S-<left>" . windmove-left)
+   ("C-S-<right>" . windmove-right)
+   ("C-S-<down>" . windmove-down)
+   ("C-S-<up>" . windmove-up))
   :ensure t)
 
 (use-package recentf
@@ -197,7 +199,8 @@ Return a list of installed packages or nil for every skipped package."
 (use-package company
   :ensure t
   :config
-  (global-company-mode 1))
+  (global-company-mode 1)
+  (setq company-dabbrev-code-other-buffers (quote all)))
 
 (use-package yasnippet
   :ensure t
@@ -275,12 +278,39 @@ Return a list of installed packages or nil for every skipped package."
   (which-key-mode 1)
   (which-key-setup-side-window-right-bottom))
 
+
+(use-package org-bullets
+  :ensure t
+  :config
+  (setq org-bullets-bullet-list
+  '("☯"
+    "✪⚪"
+    "✤"
+    "✿"
+    )))
+
+(use-package org
+  :mode ("\\.org\\'" . org-mode)
+  :config
+  (setq org-log-done t)
+  (setq org-hide-leading-stars t)
+  :init
+  (add-hook 'org-mode-hook (lambda()
+                             (org-bullets-mode 1)
+                             (org-defkey org-mode-map (kbd "M-S-return")  'org-insert-todo-heading-respect-content)
+                             (org-defkey org-mode-map (kbd "<C-up>")      'org-metaup)
+                             (org-defkey org-mode-map (kbd "<C-down>")    'org-metadown)
+                             (org-defkey org-mode-map (kbd "<C-left>")    'org-metaleft)
+                             (org-defkey org-mode-map (kbd "<C-right>")   'org-metaright)
+                             (org-defkey org-mode-map (kbd "M-<right>")   'nil)
+                             (org-defkey org-mode-map (kbd "M-<left>")    'nil))))
+
 (use-package python
   :mode ("\\.py\\'" . python-mode)
   :interpreter ("python" . python-mode)
   :bind
   (:map python-mode-map
-        ("<RET>" . electric-newline-and-maybe-indent)
+        ("M-S-<RET>" . electric-newline-and-maybe-indent)
         ("M-`" . python-shell-switch-to-shell))
   :init
   (add-hook 'python-mode-hook (lambda()
@@ -288,7 +318,6 @@ Return a list of installed packages or nil for every skipped package."
                                 (turn-on-eldoc-mode)
                                 (setq show-trailing-whitespace t)
                                 )))
-
 
 (use-package ui-config
   :load-path local-package-dir
@@ -302,6 +331,10 @@ Return a list of installed packages or nil for every skipped package."
   :init
   (setq sticky-map (make-sparse-keymap))
   (setq emulation-mode-map-alists (list (list (cons 'sticky-map sticky-map))))
+  ;; meta-shift-return is not defined by the normal xterm input-decode-map.
+  ;; this is also our own key code. not standard compliant.
+  (define-key input-decode-map "\e[13;8u" [M-S-return])
+  (define-key input-decode-map "\e\e[13;8u" [M-S-return])
 
   :bind
   (("C-s" . isearch-forward-regexp)
@@ -335,6 +368,7 @@ Return a list of installed packages or nil for every skipped package."
    ("C-o". other-window)
    ("M-d". kill-line)
    ("M-8" . match-paren)
+   ("M-e" . ivy-switch-buffer)
 
    :map c-mode-base-map
    ("C-c c" . recompile)
@@ -343,9 +377,11 @@ Return a list of installed packages or nil for every skipped package."
    ("C-c r" . rotate-among-files)))
 
 (use-package coding-config
+  :demand
   :load-path local-package-dir)
 
 (use-package local-config
+  :demand
   :load-path local-package-dir)
 
 (server-start nil)

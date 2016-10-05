@@ -33,6 +33,8 @@
 (setq truncate-lines t)
 (global-visual-line-mode)
 (setq show-trailing-whitespace t)
+(setq fill-column 80)
+(show-paren-mode 1)
 
 ;; highlight marked region
 (transient-mark-mode 1)
@@ -90,6 +92,7 @@
       try-expand-dabbrev-all-buffers try-expand-dabbrev-from-kill
       try-complete-lisp-symbol-partially try-complete-lisp-symbol
       try-expand-line try-expand-whole-kill))
+
 (bind-key "M-/" 'hippie-expand)
 
 ;; Make some buffers only pop up specific places.
