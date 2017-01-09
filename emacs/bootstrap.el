@@ -9,6 +9,11 @@
 (setq package-enable-at-startup nil)
 (package-initialize)
 
+(setq url-proxy-services
+       '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+         ("http" . "fwdproxy.any:8080")
+         ("https" . "fwdproxy.any:8080")))
+
 (defun ensure-package-installed (&rest packages)
     "Assure every package is installed, ask for installation if it’s not.
 Return a list of installed packages or nil for every skipped package."
@@ -57,7 +62,6 @@ Return a list of installed packages or nil for every skipped package."
 (use-package counsel
   :bind
   (("M-y" . counsel-yank-pop)
-   ("M-t" . counsel-recentf)
    ("M-x"  . counsel-M-x)
    ("C-x C-m"  . counsel-M-x)
    ("C-c C-m" . counsel-M-x)
@@ -200,7 +204,12 @@ Return a list of installed packages or nil for every skipped package."
   :ensure t
   :config
   (global-company-mode 1)
-  (setq company-dabbrev-code-other-buffers (quote all)))
+  (setq company-dabbrev-code-other-buffers (quote all))
+  (setq company-backends
+   (quote
+    (company-bbdb company-nxml company-css company-eclim company-semantic company-clang company-xcode company-cmake company-capf company-files
+                  (company-dabbrev-code company-gtags company-keywords)
+                  company-oddmuse company-dabbrev))))
 
 (use-package yasnippet
   :ensure t
@@ -267,7 +276,9 @@ Return a list of installed packages or nil for every skipped package."
   :ensure t)
 
 (use-package multiple-cursors
-  :ensure t)
+  :ensure t
+  :bind
+  (("C-c e" . mc/edit-lines)))
 
 (use-package try
   :ensure t)
@@ -376,6 +387,42 @@ Return a list of installed packages or nil for every skipped package."
    ("C-c C-r" . rotate-among-files)
    ("C-c r" . rotate-among-files)))
 
+(use-package company-flow
+  :ensure t
+  :config
+  (add-to-list 'company-backends 'company-flow))
+
+(use-package flycheck
+  :ensure t
+  :config
+  (global-flycheck-mode)
+
+  (defun recenter-to-reposition (orig-fun &rest args)
+    (let ((recenter reposition-window))
+      (apply orig-fun args)))
+
+  ;; flycheck has this bad flickering affect in console mode due to a
+  ;; lot of recentering of the current error in the error list window.
+  (advice-add 'flycheck-error-list-recenter-at :around #'recenter-to-reposition))
+
+(use-package flycheck-flow
+  :ensure t)
+
+(require 'flycheck-rtags)
+
+(use-package web-mode
+  :mode ("\\.js\\'" . web-mode)
+  :mode ("\\.css\\'" . web-mode)
+  :config
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (setq web-mode-content-types-alist
+      '(("jsx"    . "\\.react.js\\'")))
+  (flycheck-add-mode 'javascript-flow 'web-mode)
+  :bind
+  (("<f12>" . flycheck-list-errors))
+  :ensure t)
+
 (use-package coding-config
   :demand
   :load-path local-package-dir)
@@ -383,6 +430,7 @@ Return a list of installed packages or nil for every skipped package."
 (use-package local-config
   :demand
   :load-path local-package-dir)
+
 
 (server-start nil)
 

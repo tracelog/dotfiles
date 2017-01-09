@@ -19,7 +19,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes (quote (sanityinc-tomorrow-vibrant)))
- '(package-selected-packages (quote (org-bullets company-shell))))
+ '(package-selected-packages
+   (quote
+    (js3-mode flycheck-flow flycheck company-flow web-mode spacemacs-theme cmake-mode org-bullets company-shell))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

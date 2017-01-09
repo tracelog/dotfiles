@@ -28,7 +28,6 @@
 (global-font-lock-mode 1)
 (show-paren-mode 1)
 (electric-pair-mode 1)
-(electric-quote-mode 1)
 (set-default 'truncate-lines t)
 (setq truncate-lines t)
 (global-visual-line-mode)

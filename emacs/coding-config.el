@@ -54,4 +54,13 @@
             (abbrev-mode -1)
             (setq show-trailing-whitespace t)))
 
+(setq flycheck-python-flake8-executable "/usr/local/bin/flake8-3")
+
+;; c-mode-common-hook is also called by c++-mode
+(add-hook 'c-mode-common-hook
+          (lambda()
+            (flycheck-select-checker 'rtags)
+            (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
+            (setq-local flycheck-check-syntax-automatically nil)))
+
 (provide 'coding-config)

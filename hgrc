@@ -16,6 +16,7 @@ ignore = ~/.hgignore
 l = !hg log --template '\033[0;33m{node|short} \033[0m({date|age}) \033[1;34m{desc|firstline} \033[0;36m{author|user} \n  {join(files, "\n  ")} \n\n' $@
 p = !hg summary
 br = !hg bookmarks
+ls = !hg sl
 cp = !hg graft
 stash = !hg shelve
 unstash = !hg unshelve
