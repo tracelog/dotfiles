@@ -19,9 +19,11 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes (quote (sanityinc-tomorrow-vibrant)))
+ '(flycheck-disabled-checkers nil)
  '(package-selected-packages
    (quote
-    (js3-mode flycheck-flow flycheck company-flow web-mode spacemacs-theme cmake-mode org-bullets company-shell))))
+    (clang-format key-chord embrace expand-region selected js3-mode flycheck-flow flycheck company-flow web-mode spacemacs-theme cmake-mode org-bullets company-shell)))
+ '(truncate-lines t))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -30,6 +32,7 @@
  ;; If there is more than one, they won't work right.
  '(mode-line-buffer-id ((t (:weight bold))))
  '(powerline-active1 ((t (:inherit mode-line :background "grey22" :foreground "color-39"))))
+ '(powerline-active2 ((t (:inherit mode-line :background "grey22" :foreground "#cccccc"))))
  '(powerline-inactive1 ((t (:inherit mode-line :background "black" :foreground "#a8a8a8"))))
  '(powerline-inactive2 ((t (:inherit mode-line :background "grey22" :foreground "#a8a8a8")))))
 

@@ -5,6 +5,7 @@
 ;;; hh flowcheck checker.
 
 ;;; Code:
+
 (require 'flycheck)
 
 (flycheck-def-args-var flycheck-hh-args hh)

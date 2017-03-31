@@ -33,6 +33,8 @@ setopt SHARE_HISTORY
 autoload -U colors
 colors
 
+setopt PROMPT_SUBST
+
 PS1="[%n %~] "
 
 

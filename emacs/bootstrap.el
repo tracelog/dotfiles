@@ -2,17 +2,16 @@
 
 (defconst local-package-dir "~/.dotfiles/emacs")
 
+(use-package local-env
+  :demand
+  :load-path local-package-dir)
+
 ;; Install packages
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/") t)
 (setq package-enable-at-startup nil)
 (package-initialize)
-
-(setq url-proxy-services
-       '(("no_proxy" . "^\\(localhost\\|10.*\\)")
-         ("http" . "fwdproxy.any:8080")
-         ("https" . "fwdproxy.any:8080")))
 
 (defun ensure-package-installed (&rest packages)
     "Assure every package is installed, ask for installation if it’s not.
@@ -68,6 +67,7 @@ Return a list of installed packages or nil for every skipped package."
    ("C-x m" . counsel-M-x)
    ("C-x C-f" . counsel-find-file)
    ("<f1> c" . counsel-describe-face)
+   ("<f3>" . counsel-ag)
    :map ivy-minibuffer-map
    ("M-y" . ivy-next-line))
 
@@ -92,7 +92,7 @@ Return a list of installed packages or nil for every skipped package."
   :config
   (defconst color-theme-sanityinc-tomorrow-colors
     '((vibrant . ((background . "#2d2d2d")
-                  (current-line . "#393939")
+                  (current-line . "#3e4446")
                   (selection . "#3e4446")
                   (foreground . "#cccccc")
                   (comment . "#999999")
@@ -114,6 +114,7 @@ Return a list of installed packages or nil for every skipped package."
   (set-face-foreground 'font-lock-constant-face "color-158")
   (set-face-foreground 'font-lock-type-face "#cc99cc")
   (set-face-foreground 'font-lock-preprocessor-face "orange")
+  (set-face-background 'region "color-140")
   (setq custom-enabled-themes '(sanityinc-tomorrow-vibrant))
   (setq custom-safe-themes
     '("628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
@@ -130,6 +131,7 @@ Return a list of installed packages or nil for every skipped package."
   (custom-set-faces
    '(mode-line-buffer-id ((t (:weight bold :foreground "color-240"))))
    '(powerline-active1 ((t (:inherit mode-line :background "grey22" :foreground "color-39"))))
+   '(powerline-active2 ((t (:inherit mode-line :background "grey22" :foreground "#cccccc"))))
    '(powerline-inactive1 ((t (:inherit mode-line :background "black" :foreground "#a8a8a8"))))
    '(powerline-inactive2 ((t (:inherit mode-line :background "grey22" :foreground "#a8a8a8"))))
    )
@@ -185,10 +187,10 @@ Return a list of installed packages or nil for every skipped package."
 
 (use-package windmove
   :bind
-  (("C-S-<left>" . windmove-left)
-   ("C-S-<right>" . windmove-right)
-   ("C-S-<down>" . windmove-down)
-   ("C-S-<up>" . windmove-up))
+  (("C-<left>" . windmove-left)
+   ("C-<right>" . windmove-right)
+   ("C-<down>" . windmove-down)
+   ("C-<up>" . windmove-up))
   :ensure t)
 
 (use-package recentf
@@ -229,7 +231,7 @@ Return a list of installed packages or nil for every skipped package."
   (setenv "PAGER" "cat")
   (add-hook 'shell-mode-hook 'dirtrack-mode)
   (setq comint-prompt-read-only t)
-  (setq dirtrack-list '("^%[^a-z0-9.]+\\[[a-z]+ \\(.*\\)\\]" 1))
+  (setq dirtrack-list '("\\[[a-z]+ \\(.*\\) \\(\(.*\)\\)?\]" 1))
   (add-hook 'shell-mode-hook (lambda()
                                (setq-local yas-fallback-behavior '(apply company-manual-begin . ()))))
 
@@ -289,6 +291,27 @@ Return a list of installed packages or nil for every skipped package."
   (which-key-mode 1)
   (which-key-setup-side-window-right-bottom))
 
+(use-package clang-format
+  :ensure t)
+
+(use-package selected
+  :bind
+  (:map selected-keymap
+        ("f" . clang-format-region)
+        ("i" . indent-region)
+        ("k" . kill-region)
+        ("s" . sort-lines)
+        ("e" . mc/edit-lines)
+        ("u" . undo))
+  :config
+  (selected-global-mode 1)
+  :demand t
+  :ensure t)
+
+(use-package expand-region
+  :ensure t
+  :bind
+  (("<C-return>" . er/expand-region)))
 
 (use-package org-bullets
   :ensure t
@@ -358,12 +381,10 @@ Return a list of installed packages or nil for every skipped package."
    ("C-c l" . sort-lines)
    ("C-x C-g" . keyboard-quit)
    ("<f11>" . revert-no-confirm)
-   ("<f12>" . cycle-buffer)
    ("<f6>" . next-error)
    ("<f9>" . repeat-complex-command)
    ("M-i" . indent-region)
    ("M-%" . query-replace-regexp)
-   ("<f3>" . query-replace-regexp)
    ("M-DEL" . sc-join-line)
    ("M-`" . cycle-window)
 
@@ -403,12 +424,18 @@ Return a list of installed packages or nil for every skipped package."
 
   ;; flycheck has this bad flickering affect in console mode due to a
   ;; lot of recentering of the current error in the error list window.
-  (advice-add 'flycheck-error-list-recenter-at :around #'recenter-to-reposition))
+  (advice-add 'flycheck-error-list-recenter-at :around #'recenter-to-reposition)
+  :bind
+  ("<f12>" . flycheck-list-errors)
+  (:map flycheck-error-list-mode-map
+        ("<f12>" . cycle-buffer)))
+
 
 (use-package flycheck-flow
   :ensure t)
 
 (require 'flycheck-rtags)
+(setq flycheck-disabled-checkers '(rtags))
 
 (use-package web-mode
   :mode ("\\.js\\'" . web-mode)
@@ -419,8 +446,6 @@ Return a list of installed packages or nil for every skipped package."
   (setq web-mode-content-types-alist
       '(("jsx"    . "\\.react.js\\'")))
   (flycheck-add-mode 'javascript-flow 'web-mode)
-  :bind
-  (("<f12>" . flycheck-list-errors))
   :ensure t)
 
 (use-package coding-config
